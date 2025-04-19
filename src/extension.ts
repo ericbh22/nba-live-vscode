@@ -30,6 +30,11 @@ function restartPolling(playermanager: playerManager, playergridView: playerGrid
 	});
   }
 export function activate(context: vscode.ExtensionContext) {
+	const config = vscode.workspace.getConfiguration();
+	const currentTheme = config.get<string>('workbench.colorTheme');
+	const prevTheme = config.get<string>('nbaLive.previousTheme');
+
+
 	registerStatusBarControls(context);
 	// registerStatusBarControls(context);
 
@@ -43,7 +48,31 @@ export function activate(context: vscode.ExtensionContext) {
 	
 
 	restartPolling(playermanager, playergridView);
-	
+	// context.subscriptions.push(
+	// 	vscode.commands.registerCommand('nbalive.toggleLakersTheme', async () => {
+	// 	  const config = vscode.workspace.getConfiguration();
+	// 	  const currentTheme = config.get<string>('workbench.colorTheme');
+	  
+	// 	  if (currentTheme !== 'Lakers Theme') {
+	// 		// Save previous theme
+	// 		await config.update('nbaLive.previousTheme', currentTheme, vscode.ConfigurationTarget.Global);
+	// 	  }
+	  
+	// 	  await config.update('workbench.colorTheme', 'Lakers Theme', vscode.ConfigurationTarget.Workspace);
+	// 	  vscode.window.showInformationMessage('🏀 Switched to Lakers Theme!');
+	// 	})
+	//   );
+
+	//   context.subscriptions.push(
+	// 	vscode.commands.registerCommand('nbalive.restoreDefaultTheme', async () => {
+	// 	  const config = vscode.workspace.getConfiguration();
+	// 	  const prev = config.get<string>('nbaLive.previousTheme') ?? 'Default Dark+';
+	  
+	// 	  await config.update('workbench.colorTheme', prev, vscode.ConfigurationTarget.Global);
+	// 	  await vscode.commands.executeCommand('workbench.action.selectTheme');
+	// 	  vscode.window.showInformationMessage(`Restored theme: ${prev}`);
+	// 	})
+	//   );
 	context.subscriptions.push(
 		vscode.commands.registerCommand("nbalive.chooseGame", async() => {
 		const playermanager = playerManager.getInstance(context);
@@ -125,42 +154,130 @@ export function activate(context: vscode.ExtensionContext) {
 		  // this is currently polling the player pick, which is not what we want, we wanna be polling all of our players in our player list 
 		  restartPolling(playermanager, playergridView);
 		}),
+		vscode.commands.registerCommand("nbalive.addPlayerUI", async () => {
+			const playermanager = playerManager.getInstance(context);
 		
-			vscode.commands.registerCommand("nbalive.removePlayer", async () => {
-				const players = playermanager.getPlayers();
-
-				// Check if there are players to remove
-				if (players.length === 0) {
-				  vscode.window.showInformationMessage("No players available to remove.");
-				  return;
-				}
-			  
-				// Create the dropdown with the player names
-				const playerPick = await vscode.window.showQuickPick(
-				  players.map((player) => ({
-					label: player.name,  // Player name
-					description: `ID: ${player.personId}`, // You can add any other player information here
-					playerId: player.personId, // Store player id to remove it later
-				  })),
-				  {
-					placeHolder: "Select a player to remove",
-				  }
-				);
-			  
-				if (playerPick) {
-				  // Call removePlayer with the selected playerId
-				  playermanager.removePlayer(playerPick.label);
-				  // Send updated players list to the webview
-				  playergridView.postMessage({
-					type: "updatePlayers",
-					players: playermanager.getPlayers(),
-				  });
-			  
-				  // Restart polling if needed
-				  restartPolling(playermanager, playergridView);
-				}			  
-			})
+			const liveGames = await getLiveGames();
+			if (liveGames.length === 0) {
+			  vscode.window.showErrorMessage("No live games currently available.");
+			  return;
+			}
+		
+			const gamePick = await vscode.window.showQuickPick(
+			  liveGames.map((g: any) => ({
+				label: `${g.awayTeam.teamTricode} @ ${g.homeTeam.teamTricode}`,
+				description: `Q${g.period} ${g.gameClock || 'Final'}`,
+				gameId: g.gameId,
+			  })),
+			  { placeHolder: "Select a live game" }
+			);
+			if (!gamePick) return;
+		
+			const players = await getActivePlayersFromGame(gamePick.gameId);
+			console.log(players);
+			if (players.length === 0) {
+			  vscode.window.showErrorMessage("No active players found.");
+			  return;
+			}
+		
+			const playerPick = await vscode.window.showQuickPick(
+			  players.map((p: any) => ({
+				  label: `${p.firstName} ${p.familyName}`,
+				  description: `#${p.jerseyNum || '–'} | ${p.position || ''}`,
+				  personId: p.personId,
+				  raw: p,
+				})),
+			  { placeHolder: "Select a player to track" }
+			);
+			if (!playerPick) return;
+		
+			playermanager.addPlayer({
+			  name: `${playerPick.raw.firstName} ${playerPick.raw.familyName}`,
+			  personId: playerPick.personId,
+			  pts: playerPick.raw.points,
+			  reb: playerPick.raw.reboundsTotal,
+			  ast: playerPick.raw.assists,
+			  tov: playerPick.raw.turnovers,
+			});
+		  
+			playergridView.postMessage({
+			  type: "updatePlayers",
+			  players: playermanager.getPlayers()
+			});
+			// this is currently polling the player pick, which is not what we want, we wanna be polling all of our players in our player list 
+			restartPolling(playermanager, playergridView);
+		  }),
+	
+			
 		  );
+		  vscode.commands.registerCommand("nbalive.removePlayer", async () => {
+			const players = playermanager.getPlayers();
+
+			// Check if there are players to remove
+			if (players.length === 0) {
+			  vscode.window.showInformationMessage("No players available to remove.");
+			  return;
+			}
+		  
+			// Create the dropdown with the player names
+			const playerPick = await vscode.window.showQuickPick(
+			  players.map((player) => ({
+				label: player.name,  // Player name
+				description: `ID: ${player.personId}`, // You can add any other player information here
+				playerId: player.personId, // Store player id to remove it later
+			  })),
+			  {
+				placeHolder: "Select a player to remove",
+			  }
+			);
+		  
+			if (playerPick) {
+			  // Call removePlayer with the selected playerId
+			  playermanager.removePlayer(playerPick.label);
+			  // Send updated players list to the webview
+			  playergridView.postMessage({
+				type: "updatePlayers",
+				players: playermanager.getPlayers(),
+			  });
+		  
+			  // Restart polling if needed
+			  restartPolling(playermanager, playergridView);
+			}			  
+		});
+		vscode.commands.registerCommand("nbalive.removePlayerUI", async () => {
+			const players = playermanager.getPlayers();
+
+			// Check if there are players to remove
+			if (players.length === 0) {
+			  vscode.window.showInformationMessage("No players available to remove.");
+			  return;
+			}
+		  
+			// Create the dropdown with the player names
+			const playerPick = await vscode.window.showQuickPick(
+			  players.map((player) => ({
+				label: player.name,  // Player name
+				description: `ID: ${player.personId}`, // You can add any other player information here
+				playerId: player.personId, // Store player id to remove it later
+			  })),
+			  {
+				placeHolder: "Select a player to remove",
+			  }
+			);
+		  
+			if (playerPick) {
+			  // Call removePlayer with the selected playerId
+			  playermanager.removePlayer(playerPick.label);
+			  // Send updated players list to the webview
+			  playergridView.postMessage({
+				type: "updatePlayers",
+				players: playermanager.getPlayers(),
+			  });
+		  
+			  // Restart polling if needed
+			  restartPolling(playermanager, playergridView);
+			}			  
+		});
 		}
 
 

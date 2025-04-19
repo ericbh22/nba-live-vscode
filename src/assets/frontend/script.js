@@ -3,6 +3,12 @@ function renderPlayers(players) {
     const grid = document.getElementById("playergrid");
     grid.innerHTML = "";
 
+    if (players.length === 0){
+        grid.innerHTML = `
+        <p class="empty-text">No players added yet</p>
+        <p class="empty-text">Use the <strong>"Add Player"</strong> command to get started!</p>`;
+        return;
+    }
     players.forEach(player => {
         const card = document.createElement("div");
         card.className = "player-card";

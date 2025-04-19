@@ -1,22 +1,31 @@
 {
   "name": "nbalive",
   "displayName": "NBA Live",
-  "description": "View NBA Games live in your taskbar!",
+  "description": "View NBA Games and track player stats live in your taskbar!",
+  "publisher": "fromfuchsia",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.99.0"
   },
+  "icon": "images/icon.png",
+  "license": "MIT",
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ericbh22/nba-live-vscode"
+
+  },
   "activationEvents": [],
   "main": "./dist/extension.js",
-  "contributes": {
+"contributes": {
+
     "views": {
       "explorer": [
         {
           "id": "NBAGrid",
-          "name": "NBAGRID",
+          "name": "NBA Live",
           "type": "webview"
         }
       ]
@@ -24,35 +33,50 @@
     "commands": [
       {
         "command": "nbalive.addPlayer",
-        "title": "Add Player"
+        "title": "NBA Add Active Player"
       },
       {
         "command": "nbalive.removePlayer",
-        "title": "Remove Player"
+        "title": "NBA Remove Player"
       },
       {
         "command": "nbalive.chooseGame",
-        "title": "Choose Game"
+        "title": "NBA Choose Game"
+      },
+      {
+        "command": "nbalive.addPlayerUI",
+        "title": "Add Active Player"
+      },
+      {
+        "command": "nbalive.removePlayerUI",
+        "title": "Remove Player"
+      },
+      {
+        "command": "nbalive.toggleLakersTheme",
+        "title": "NBA Switch to Lakers Theme"
+      },
+      {
+        "command": "nbalive.restoreDefaultTheme",
+        "title": "NBA Restore Default Theme"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "nbalive.addPlayer",
+          "command": "nbalive.addPlayerUI",
           "title": "Add Player",
           "group": "navigation",
           "when": "view==NBAGrid"
         },
         {
-          "command": "nbalive.removePlayer",
+          "command": "nbalive.removePlayerUI",
           "title": "Remove Player",
           "group": "navigation",
           "when": "view==NBAGrid"
         } 
       ]
       }
-    
-  },
+    },
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",

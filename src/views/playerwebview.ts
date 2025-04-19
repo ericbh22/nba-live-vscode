@@ -74,7 +74,7 @@ export class playerGridView implements vscode.WebviewViewProvider {
       <link href="${style}" rel="stylesheet">
     </head>
     <body>
-      <h2>🏀 Tracked NBA Players</h2>
+      <h2>🏀 Tracked Players</h2>
       <div id="playergrid" class="player-grid">
         <!-- Player cards will be dynamically inserted here -->
       </div>

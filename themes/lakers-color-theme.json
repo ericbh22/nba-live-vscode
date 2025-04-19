@@ -1,0 +1,32 @@
+{
+    "name": "Lakers Theme",
+    "type": "dark",
+    "colors": {
+      "editor.background": "#552583",
+      "editor.foreground": "#FDB927",
+      "activityBar.background": "#552583",
+      "activityBar.foreground": "#FDB927",
+      "titleBar.activeBackground": "#552583",
+      "titleBar.activeForeground": "#FDB927"
+    },
+    "tokenColors": [
+      {
+        "scope": ["keyword", "storage"],
+        "settings": {
+          "foreground": "#FDB927"
+        }
+      },
+      {
+        "scope": ["variable", "string"],
+        "settings": {
+          "foreground": "#ffffff"
+        }
+      },
+      {
+        "scope": ["function", "entity.name.function"],
+        "settings": {
+          "foreground": "#FDB927"
+        }
+      }
+    ]
+  }

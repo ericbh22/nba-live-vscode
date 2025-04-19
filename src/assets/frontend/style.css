@@ -79,3 +79,15 @@ display: flex;
 flex-direction: column;
 justify-content: space-around;
 }
+
+.empty-text {
+  padding: 10px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.empty-subtext {
+  font-size: 0.8rem;
+  color: #aaa;
+}
