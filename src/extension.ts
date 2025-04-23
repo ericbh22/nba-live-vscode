@@ -18,9 +18,6 @@ function restartPolling(playermanager: playerManager, playergridView: playerGrid
 	pollingInterval = startPollingPlayerStats(playermanager.getPlayers(), (player, stats) => {
 	  if (stats) {
 		playermanager.updatePlayerStats(player.personId!, stats);
-		vscode.window.showInformationMessage(
-		  `${player.name} : pts: ${stats.pts} reb: ${stats.reb} ast: ${stats.ast} TO: ${stats.tov}`
-		);
   
 		playergridView.postMessage({
 		  type: "updatePlayers",
@@ -40,11 +37,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     // 👇 Start polling loop after everything is initialized
 
-    const playermanager = playerManager.getInstance(context); // singleton instance, basically creating an instnace of this class, albummamanger() basically
+    const playermanager = playerManager.getInstance(context); // singleton instance, basically creating an instnace of this class, playermanager() basically
 
     // Create the view provider
     const playergridView = new playerGridView(context);
-    context.subscriptions.push(vscode.window.registerWebviewViewProvider(playerGridView.viewType, playergridView)); // note the .viewType, remember the viewtype we have depdfiend it ion package.json. and albumgridwebview handles actual rendering and events 
+    context.subscriptions.push(vscode.window.registerWebviewViewProvider(playerGridView.viewType, playergridView)); // note the .viewType, remember the viewtype we have depdfiend it ion package.json. and playergridview handles actual rendering and events 
 	
 
 	restartPolling(playermanager, playergridView);
@@ -121,7 +118,7 @@ export function activate(context: vscode.ExtensionContext) {
 		  if (!gamePick) return;
 	  
 		  const players = await getActivePlayersFromGame(gamePick.gameId);
-		  console.log(players);
+		//   console.log(players);
 		  if (players.length === 0) {
 			vscode.window.showErrorMessage("No active players found.");
 			return;
@@ -174,7 +171,7 @@ export function activate(context: vscode.ExtensionContext) {
 			if (!gamePick) return;
 		
 			const players = await getActivePlayersFromGame(gamePick.gameId);
-			console.log(players);
+			// console.log(players);
 			if (players.length === 0) {
 			  vscode.window.showErrorMessage("No active players found.");
 			  return;

@@ -6,10 +6,10 @@ export class playerGridView implements vscode.WebviewViewProvider {
 
   public static readonly viewType = 'NBAGrid'; // class level constnat, basicaly sayting view_type musicshelfgrid 
   private view?: vscode.WebviewView; // instance properties that are local, type hinting, this view is optional 
-  private playerManager: playerManager; // album manager is an isntance of albumManager, type hinting here 
+  private playerManager: playerManager; // player manager is an isntance of playerManager, type hinting here 
   constructor(private context: vscode.ExtensionContext) {
     this.playerManager = playerManager.getInstance(context);
-    // Subscribe to album changes
+    // Subscribe to player changes
     this.playerManager.onDidPlayerCHange(() => {
       if (this.view) {
         this.postMessage({ 
@@ -92,6 +92,6 @@ export class playerGridView implements vscode.WebviewViewProvider {
 // now we need to set up event listeners, with webview on did receive message. what this does is processes what message we recieve, and does smthn with it 
 // however, our webview needs a epearte event listerner 
 // so when init is send from our webview to our extension , it will go into the message listener and proces t
-// now notice we have a ondidchangeALbums() at the top, thats there to lsiten to the fires from albumchange ts, so when album changes, that works  and sends an update albums message to the webview 
+
 
 // so the next course of action is to make this data SAVE between runs, and then implement remove and move, and UI is basically done! Im going to quickly add remove 

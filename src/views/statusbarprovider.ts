@@ -37,14 +37,15 @@ export function registerStatusBarControls(context: vscode.ExtensionContext) {
         );
 
         if (selectedGame) {
-            // Once a game is selected, get the live score and display it in the status bar
+            selectedGameId = selectedGame.gameId; // 🔥 This line was missing
+            const gameLabel = selectedGame.label;
             const scores = await getLiveScore(selectedGame.gameId);
-            gameDisplay.text = `🏀 ${selectedGame.label} - ${scores[0]} - ${scores[1]}`; // does label here work  
-            startScorePolling(gameDisplay, selectedGame.gameId);
-        }
+            gameDisplay.text = `🏀 ${selectedGame.label} - ${scores[0]} - ${scores[1]}`;
+            startScorePolling(gameDisplay, selectedGame.gameId,gameLabel);
+          }
     }));
 
-    function startScorePolling(gameDisplay: vscode.StatusBarItem, gameId: string) {
+    function startScorePolling(gameDisplay: vscode.StatusBarItem, gameId: string,gameLabel:string) {
         // Clear any previous polling interval
         if (pollingInterval) clearInterval(pollingInterval);
 
@@ -52,7 +53,7 @@ export function registerStatusBarControls(context: vscode.ExtensionContext) {
         pollingInterval = setInterval(async () => {
             if (selectedGameId === gameId) {
                 const scores = await getLiveScore(gameId);
-                gameDisplay.text = `🏀 ${selectedGameId}: ${scores[0]} - ${scores[1]}`;
+                gameDisplay.text = `🏀 ${gameLabel}: ${scores[0]} - ${scores[1]}`;
             }
         }, 1000); // Refresh every 1000ms (1 second)
     }

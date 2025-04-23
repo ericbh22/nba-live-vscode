@@ -8,7 +8,7 @@ import * as path from 'path'; // convenience
 let extensionStorageFolder: string = '';
 let playerPath: string;
 export class playerManager { // we need to write export otherwise this class is not exportable...
-    private static instance: playerManager; // private basically means not global basicallyt ther same as _instance = None in python :AlbumManager is just type hinting 
+    private static instance: playerManager; // private basically means not global basicallyt ther same as _instance = None in python :playerMananager is just type hinting 
 
     private _onPlayerChange = new vscode.EventEmitter<void>();
     private _players: Player[] = [];
@@ -22,37 +22,37 @@ export class playerManager { // we need to write export otherwise this class is 
                 fs.mkdirSync(extensionStorageFolder, { recursive: true });  //create the path if it doesnt already exist, saves us from crashes, rmbr we just need the path to exist here, before we were doing string checks 
             }
 
-            this.loadPlayerFile(); //  Try loading albums from file
+            this.loadPlayerFile(); //  Try loading players from file
         }
     }
     public static getInstance(context?: vscode.ExtensionContext): playerManager {
         if (!playerManager.instance) {
             playerManager.instance = new playerManager(context);
             if (context) {
-                playerManager.instance.loadPlayerFile(); // Load albums when context is available
+                playerManager.instance.loadPlayerFile(); // Load players when context is available
             }
         }
         return playerManager.instance;
     }
-    // Add a new album
+    // Add a new player
     addPlayer(player: Player): Player {
         const newPlayer: Player = {
-            ...player, // take existing album data 
+            ...player, // take existing player data 
             position: this.calculateNextPosition()
-        }; // generates a new album with a unique ID 
+        }; // generates a new player with a unique ID 
         this._players.push(newPlayer); // append the albunm 
         // we might ned to add smthn to save permanentlky 
         this._onPlayerChange.fire();
         this.savePlayertoFile();
         return newPlayer;
     }
-    // Remove an album
+    // Remove an playe
     removePlayer(playerName: string): void {
-        this._players = this._players.filter(player => player.name !== playerName); // goes through the list and removes the album if it isnt what we want, the arrow is basically a callback function, kinda like lambda,  
+        this._players = this._players.filter(player => player.name !== playerName); // goes through the list and removes the player if it isnt what we want, the arrow is basically a callback function, kinda like lambda,  
         const temp = this._players;
         this._players = [];
-        for (var album of temp){
-            this.addPlayer(album); // this can be done so we basically reinsert all the albums to prevent gaps after deleting from the middle 
+        for (var player of temp){
+            this.addPlayer(player); // this can be done so we basically reinsert all the players to prevent gaps after deleting from the middle 
         }
         this._onPlayerChange.fire();
         this.savePlayertoFile();
@@ -70,10 +70,10 @@ export class playerManager { // we need to write export otherwise this class is 
                 if (Array.isArray(parsed)) { // conver to js array 
                     this._players = parsed;
                     this._onPlayerChange.fire();
-                    console.log('Albums loaded from file:', parsed);
+                    console.log('Players loaded from file:', parsed);
                 }
             } catch (e) {
-                console.error('Error loading albums file:', e);
+                console.error('Error loading players file:', e);
                 this._players = [];
             }
         } else {
@@ -84,9 +84,8 @@ export class playerManager { // we need to write export otherwise this class is 
     private savePlayertoFile() {
         try {
             fs.writeFileSync(playerPath, JSON.stringify(this._players, null, 2)); // write it to file 
-            // console.log('Albums saved to file.');
         } catch (e) {
-            console.error('Error saving albums file:', e);
+            console.error('Error saving players file:', e);
         }
     }
 

@@ -50,14 +50,6 @@
       {
         "command": "nbalive.removePlayerUI",
         "title": "Remove Player"
-      },
-      {
-        "command": "nbalive.toggleLakersTheme",
-        "title": "NBA Switch to Lakers Theme"
-      },
-      {
-        "command": "nbalive.restoreDefaultTheme",
-        "title": "NBA Restore Default Theme"
       }
     ],
     "menus": {

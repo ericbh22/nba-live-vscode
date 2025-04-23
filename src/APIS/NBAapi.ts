@@ -27,8 +27,8 @@ export async function getLiveGames(): Promise<any[]> {
 export async function getActivePlayersFromGame(gameId: string): Promise<any[]> {
   try {
     const { data } = await axios.get(BOXSCORE_URL(gameId));
-    console.log(gameId);
-    console.log(data);
+    // console.log(gameId);
+    // console.log(data);
     const homePlayers = data.game?.homeTeam?.players ?? [];
     const awayPlayers = data.game?.awayTeam?.players ?? [];
 
