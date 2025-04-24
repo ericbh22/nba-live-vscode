@@ -13,17 +13,33 @@ Navigate to the VScode Store and search NBA Live
 - 🏀 **Taskbar integration**  
     Browse through all availiable games in the taskbar
 
+    <img src="images/taskbar updated.PNG" alt="taskbar operations" width="30%"/>
+
+- 👀 **Explorer View**  
+    Clean interface to view your favourite player stats 
+
+    <img src="images/stephencurry explorer.PNG" alt="explorer ops" width="30%"/>
+
 
 ## Commands
 Find all the commands by hitting ctrl shift p on windows / cmd shift p on mac and typing NBA
 
-<img src="images/nbacommands.png" alt="Music Shelf in action" width="30%"/>
+<img src="images/nbacommands.png" alt="commands" width="30%"/>
+
+To activate explorer view, navigate to the explorer tab on the left side, and show NBA LIVE from the dropdown
+
+<img src="images/explorer tab.PNG" alt="commands" width="10%"/>
+
 
 ## Release Notes
+### 1.0.1
+
+Added player integration in task bar, and removed some bugs regarding duplicate players
 
 ### 1.0.0
 
 Initial release of NBA Live! Thank you for the support, background templates will be coming soon!
+
 
 <!-- 
 * [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)

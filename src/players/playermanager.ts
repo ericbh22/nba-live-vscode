@@ -35,16 +35,22 @@ export class playerManager { // we need to write export otherwise this class is 
         return playerManager.instance;
     }
     // Add a new player
-    addPlayer(player: Player): Player {
+    addPlayer(player: Player): Player | null {
         const newPlayer: Player = {
             ...player, // take existing player data 
             position: this.calculateNextPosition()
         }; // generates a new player with a unique ID 
-        this._players.push(newPlayer); // append the albunm 
-        // we might ned to add smthn to save permanentlky 
-        this._onPlayerChange.fire();
-        this.savePlayertoFile();
-        return newPlayer;
+        if (this._players.some(p => p.name === newPlayer.name)) {
+            vscode.window.showErrorMessage("Adding duplicate player!");
+            return null;
+        }
+        else{
+            this._players.push(newPlayer); // append the albunm 
+            // we might ned to add smthn to save permanentlky 
+            this._onPlayerChange.fire();
+            this.savePlayertoFile();
+            return newPlayer;
+        }
     }
     // Remove an playe
     removePlayer(playerName: string): void {

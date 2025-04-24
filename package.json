@@ -3,7 +3,7 @@
   "displayName": "NBA Live",
   "description": "View NBA Games and track player stats live in your taskbar!",
   "publisher": "fromfuchsia",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.99.0"
   },

@@ -45,14 +45,16 @@ export async function getActivePlayersFromGame(gameId: string): Promise<any[]> {
   }
 }
 export async function getLiveScore(gameId: string): Promise<any[]> {
+  // console.log(gameId);
   try {
       const { data } = await axios.get(BOXSCORE_URL(gameId));
       const homeScore = data.game.homeTeam.score;
       const awayScore = data.game.awayTeam.score;
-      return [homeScore, awayScore];
+      const time = data.game.gameStatusText;
+      return [homeScore, awayScore,time];
   } catch (err) {
       console.error(`Failed to fetch boxscore for ${gameId}:`, err);
-      return [0, 0]; // Return default scores in case of failure
+      return [0, 0,0]; // Return default scores in case of failure
   }
 }
 
@@ -97,7 +99,6 @@ export function startPollingPlayerStats(
       if (player.personId) {
         const stats = await getLiveStatsForPlayer(player.personId);
         callback(player, stats);
-        // console.log(`${player.name}:`, stats);
       } else {
         console.warn(`Player ${player.name} does not have a valid personId.`);
       }
